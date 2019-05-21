@@ -41,9 +41,8 @@ func (wg *WgWaiter) Wait(timeout time.Duration) error {
 		wg.wg.Wait()
 		wg.finished <- true
 	}()
-	var err error
 	select {
-	case err = <-wg.errChannel:
+	case err := <-wg.errChannel:
 		return err
 	case <-wg.finished:
 		return nil
