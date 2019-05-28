@@ -9,6 +9,7 @@ type WgWaiter struct {
 	wg         sync.WaitGroup
 	errChannel chan error
 	finished   chan bool
+	mux        sync.Mutex
 }
 
 func NewWaiter() *WgWaiter {
@@ -34,6 +35,14 @@ func (wg *WgWaiter) Done() {
 func (wg *WgWaiter) Fail(err error) {
 	wg.errChannel <- err
 	wg.wg.Done()
+}
+
+func (wg *WgWaiter) Lock() {
+	wg.mux.Lock()
+}
+
+func (wg *WgWaiter) Unlock() {
+	wg.mux.Unlock()
 }
 
 func (wg *WgWaiter) Wait(timeout time.Duration) error {
